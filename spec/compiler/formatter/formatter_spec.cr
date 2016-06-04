@@ -913,4 +913,10 @@ describe Crystal::Formatter do
   assert_format "[\n  1, # foo\n  3,\n]"
   assert_format "[\n  1, 2, # foo\n  3,\n]"
   assert_format "[\n  1, 2, # foo\n  3, 4,\n]"
+
+  assert_format "String?"
+  assert_format "String???"
+  assert_format "Foo::Bar?"
+  assert_format "Foo::Bar(T, U?)?"
+  assert_format "Union(Foo::Bar?, Baz?, Qux(T, U?))"
 end

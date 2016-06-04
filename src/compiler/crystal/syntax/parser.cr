@@ -3942,13 +3942,16 @@ module Crystal
       when :IDENT
         set_visibility parse_var_or_call global: true
       when :CONST
-        parse_ident_after_colons(location, true, true)
+        parse_ident_after_colons location,
+          global: true,
+          allow_type_vars: true,
+          parse_nilable: true
       else
         unexpected_token
       end
     end
 
-    def parse_ident(allow_type_vars = true)
+    def parse_ident(allow_type_vars = true, parse_nilable = true)
       location = @token.location
 
       global = false
@@ -3962,10 +3965,10 @@ module Crystal
       end
 
       check :CONST
-      parse_ident_after_colons(location, global, allow_type_vars)
+      parse_ident_after_colons(location, global, allow_type_vars, parse_nilable)
     end
 
-    def parse_ident_after_colons(location, global, allow_type_vars)
+    def parse_ident_after_colons(location, global, allow_type_vars, parse_nilable)
       start_line = location.line_number
       start_column = location.column_number
 
@@ -4007,8 +4010,19 @@ module Crystal
         const = Generic.new(const, types, named_args).at(location)
         const.end_location = token_end_location
 
-        next_token_skip_space
+        next_token
       end
+
+      if parse_nilable
+        while @token.type == :"?"
+          const = Generic.new(Path.global("Union").at(const), [
+            const, Path.global("Nil").at(const),
+          ] of ASTNode)
+          next_token
+        end
+      end
+
+      skip_space
 
       const
     end
@@ -4226,7 +4240,7 @@ module Crystal
       if @token.keyword?(:typeof)
         type = parse_typeof
       else
-        type = parse_ident
+        type = parse_ident(parse_nilable: false)
       end
       skip_space
       type
@@ -4617,7 +4631,7 @@ module Crystal
         end
       when :CONST
         ident = parse_ident
-        next_token_skip_space
+        skip_space
         check :"="
         next_token_skip_space_or_newline
         value = parse_expression
