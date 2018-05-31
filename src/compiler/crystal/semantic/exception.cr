@@ -74,12 +74,12 @@ module Crystal
 
     def to_s_with_source(source, io)
       io << ("-" * 10) << "\n\n"
-      io << "Undefined constant #{"FooBarBangBaz".colorize.yellow.bold}"
+      io << "FooBarBangBaz is undefined"
       append_to_s source, io
 
       io << <<-ERROR
 
-      Try this...
+      Try this:
 
         ▸ Ensure file is required: #{"require \"./foo_bar_bang_baz\"".colorize.green.bold}
         ▸ If constant is from a shard, make sure to require it.
@@ -105,7 +105,7 @@ module Crystal
       when String
         if File.file?(filename)
           lines = File.read_lines(filename)
-          io << " in " << relative_filename(filename).colorize.yellow.bold
+          io << " -- " << relative_filename(filename).colorize.green.bold
           # append_error_message io, msg
         else
           lines = source ? source.lines.to_a : nil
