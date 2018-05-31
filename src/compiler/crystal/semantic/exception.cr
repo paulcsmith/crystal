@@ -73,7 +73,8 @@ module Crystal
     end
 
     def to_s_with_source(source, io)
-      io << "Error: #{@message} ".colorize.bold.blue
+      io << ("—" * 10) << "\n\n"
+      io << "Undefined constant #{"FooBarBangBaz".colorize.yellow.bold}"
       append_to_s source, io
     end
 
@@ -95,7 +96,7 @@ module Crystal
       when String
         if File.file?(filename)
           lines = File.read_lines(filename)
-          io << " in " << relative_filename(filename) << ": "
+          io << " in " << relative_filename(filename).colorize.yellow.bold
           # append_error_message io, msg
         else
           lines = source ? source.lines.to_a : nil
