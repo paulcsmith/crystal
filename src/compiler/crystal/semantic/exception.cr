@@ -73,7 +73,8 @@ module Crystal
     end
 
     def to_s_with_source(source, io)
-      io << "Error "
+      # io << "Error "
+      "-- #{@message.try(&.capitalize)}"
       append_to_s source, io
     end
 
@@ -113,11 +114,16 @@ module Crystal
       end
 
       if lines && (line_number = @line) && (line = lines[line_number - 1]?)
+        # pp line.chomp
+        # pp @size
         io << "\n\n"
+        io << line_number
+        io << ":"
         io << replace_leading_tabs_with_spaces(line.chomp)
         io << '\n'
         io << (" " * (@column - 1))
         with_color.green.bold.surround(io) do
+          io << "  "
           io << '^'
           if @size > 0
             io << ("~" * (@size - 1))
@@ -125,6 +131,9 @@ module Crystal
         end
       end
       io << '\n'
+
+      # pp @message
+      # pp lines
 
       if is_macro
         io << '\n'

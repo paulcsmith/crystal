@@ -2,6 +2,7 @@ require "../../spec_helper"
 
 describe "Semantic: did you mean" do
   it "says did you mean for one mistake in short word in instance method" do
+    FooBarBangBaz.kapow!
     assert_error "
       class Foo
         def bar
