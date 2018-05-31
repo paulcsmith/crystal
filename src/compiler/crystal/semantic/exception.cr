@@ -74,19 +74,16 @@ module Crystal
 
     def to_s_with_source(source, io)
       io << ("-" * 10) << "\n\n"
-      io << "Undefined constant FooBarBangBaz"
+      io << "Undefined constant #{"FooBarBangBaz".colorize.yellow.bold}"
       append_to_s source, io
 
-      io << "\nIf #{"FooBarBangBaz".colorize.yellow.bold} is in a shard:\n"
       io << <<-ERROR
 
-        ▸ Require the shard: require "the-shard"\n
-      ERROR
+      Try this...
 
-      io << "\nIf FooBarBangBaz is in a file:\n"
-      io << <<-ERROR
+        ▸ Ensure file is required: #{"require \"./foo_bar_bang_baz\"".colorize.green.bold}
+        ▸ If constant is from a shard, make sure to require it.
 
-        ▸ Make sure to requite it: require "the-shard"\n
       ERROR
     end
 
@@ -127,8 +124,7 @@ module Crystal
 
       if lines && (line_number = @line) && (line = lines[line_number - 1]?)
         io << "\n\n  "
-        io << line_number
-        io << ":"
+        io << "#{line_number}:".colorize.bold
         io << replace_leading_tabs_with_spaces(line.chomp)
         io << '\n'
         io << (" " * (@column - 1))
