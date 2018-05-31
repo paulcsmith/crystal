@@ -74,7 +74,7 @@ module Crystal
 
     def to_s_with_source(source, io)
       # io << "Error "
-      "-- #{@message.try(&.capitalize)}"
+      io << "Error: #{@message} ".colorize.bold.yellow
       append_to_s source, io
     end
 
@@ -96,37 +96,35 @@ module Crystal
       when String
         if File.file?(filename)
           lines = File.read_lines(filename)
-          io << "in " << relative_filename(filename) << ':' << @line << ": "
-          append_error_message io, msg
+          io << "\n\n" << relative_filename(filename) << ": "
+          # append_error_message io, msg
         else
           lines = source ? source.lines.to_a : nil
-          io << "in line #{@line}: " if @line
-          append_error_message io, msg
+          # io << "in line #{@line}: " if @line
+          # append_error_message io, msg
         end
       when VirtualFile
-        io << "in macro '#{filename.macro.name}' #{filename.macro.location.try &.filename}:#{filename.macro.location.try &.line_number}, line #{@line}:\n\n"
-        io << Crystal.with_line_numbers(filename.source, @line, @color)
+        # io << "in macro '#{filename.macro.name}' #{filename.macro.location.try &.filename}:#{filename.macro.location.try &.line_number}, line #{@line}:\n\n"
+        # io << Crystal.with_line_numbers(filename.source, @line, @color)
         is_macro = true
       else
         lines = source ? source.lines.to_a : nil
-        io << "in line #{@line}: " if @line
-        append_error_message io, msg
+        # io << "in line #{@line}: " if @line
+        # append_error_message io, msg
       end
 
       if lines && (line_number = @line) && (line = lines[line_number - 1]?)
-        # pp line.chomp
-        # pp @size
-        io << "\n\n"
+        io << "\n\n  "
         io << line_number
         io << ":"
         io << replace_leading_tabs_with_spaces(line.chomp)
         io << '\n'
         io << (" " * (@column - 1))
         with_color.green.bold.surround(io) do
-          io << "  "
+          io << "    "
           io << '^'
           if @size > 0
-            io << ("~" * (@size - 1))
+            io << ("-" * (@size - 1))
           end
         end
       end

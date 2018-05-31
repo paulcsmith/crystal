@@ -1,5 +1,9 @@
 require "../../spec_helper"
 
+private def run_something_that_has_an_error
+  FooBarBangBaz.kapow!
+end
+
 describe "Semantic: did you mean" do
   it "says did you mean for one mistake in short word in instance method" do
     FooBarBangBaz.kapow!
