@@ -73,8 +73,7 @@ module Crystal
     end
 
     def to_s_with_source(source, io)
-      # io << "Error "
-      io << "Error: #{@message} ".colorize.bold.yellow
+      io << "Error: #{@message} ".colorize.bold.blue
       append_to_s source, io
     end
 
@@ -96,7 +95,7 @@ module Crystal
       when String
         if File.file?(filename)
           lines = File.read_lines(filename)
-          io << "\n\n" << relative_filename(filename) << ": "
+          io << " in " << relative_filename(filename) << ": "
           # append_error_message io, msg
         else
           lines = source ? source.lines.to_a : nil
