@@ -73,9 +73,21 @@ module Crystal
     end
 
     def to_s_with_source(source, io)
-      io << ("—" * 10) << "\n\n"
-      io << "Undefined constant #{"FooBarBangBaz".colorize.yellow.bold}"
+      io << ("-" * 10) << "\n\n"
+      io << "Undefined constant FooBarBangBaz"
       append_to_s source, io
+
+      io << "\nIf #{"FooBarBangBaz".colorize.yellow.bold} is in a shard:\n"
+      io << <<-ERROR
+
+        ▸ Require the shard: require "the-shard"\n
+      ERROR
+
+      io << "\nIf FooBarBangBaz is in a file:\n"
+      io << <<-ERROR
+
+        ▸ Make sure to requite it: require "the-shard"\n
+      ERROR
     end
 
     def append_to_s(source, io)
